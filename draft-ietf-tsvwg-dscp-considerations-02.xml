@@ -414,7 +414,8 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 ]]></artwork>
 
             <postamble>Figure showing the ToS Precedence Bleaching
-            (/Bleach-ToS-Precedence/) pathology, based on Section 3 of <xref
+            (/Bleach-ToS-Precedence/) pathology in which the first 3 bits of the DS field are
+	     reset to zero, based on Section 3 of <xref
             target="RFC1349">RFC1349</xref>.</postamble>
           </figure>
 
@@ -423,6 +424,8 @@ A DSCP can sometimes referred to by name, such as "CS1", and
             <preamble></preamble>
 
             <artwork><![CDATA[
+
+
 +---------+-------+----------+-----+----------+-----+----------+-----+
 | 56/CS7  | 57    | 58       | 59  | 60       | 61  | 62       | 63  |
 +---------+-------+----------+-----+----------+-----+----------+-----+
@@ -462,18 +465,20 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 +=================+============+====+======+======+============+====+
 ]]></artwork>
 
-            <postamble>Figure showing 000xxx DSCPs, hightlighting any current assignments and whether they are affected by any known pathologies. For example, ToS Precedence Bleaching of popular DSCPs AF11,21,31,41 would result in traffic being remarked with DSCP 2 in the Internet core. DSCP 4 has been historically used by the SSH application, following semantics which precede DiffServ<xref target="dscp4"></xref>.
+            <postamble>Figure showing the set of DSCP with 0b000xxx, current usage and affect of known pathologies. 
+	    For example, ToS Precedence Bleaching of DSCPs AF11,21,31,41 would result in traffic being remarked to DSCP 2 (0b000010).
+	    Note: Although not assigned, DSCP 4 has been historically used by SSH applications, following semantics that precede DiffServ<xref target="dscp4"></xref>.
             </postamble>
           </figure>
 
           <t></t>
 
-          <t>If ToS Precedence Bleaching occurs, packets with a DSCP 'x' would
-          be remarked to 'x' &amp; 0x07and then would be treated according to the corresponding PHB.</t>
+          <t>If ToS Precedence Bleaching occurs, packets with a DSCP 'x' are
+          remarked to 'x' &amp; 0x07and then would be treated according to the corresponding PHB.</t>
 
           <t>A variation of this behaviour clears the top three bits of a
           DSCP, unless these have values 0b110 or 0b111 (corresponding to the
-          CS6 and CS7 codepoints). As a result, a DSCP value greater than 48
+          CS6 and CS7 codepoints, section $$$REF$$$). As a result, a DSCP value greater than 48
           decimal (0x30) is less likely to be impacted by ToS Precedence
           Bleaching.</t>
         </section>
@@ -481,7 +486,7 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         <section title="Impact of ToS Precedence Remarking">
           <t>Practices based on ToS Precedence Remarking (/Remark-ToS/) <xref
           target="RFC1349">RFC1349</xref> were deprecated by <xref
-          target="RFC2474">RFC2474</xref>. These practices based on ToS
+          target="RFC2474">RFC2474</xref>. A survey showed practices based on ToS
           semantics have not yet been eliminated from deployed networks.</t>
 
           <figure>
@@ -495,18 +500,20 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 ]]></artwork>
 
             <postamble>Figure showing an example of ToS Remarking (/Remark/)
-            pathology, based on Section 3 of <xref
+            pathology, modifying the first three bits of the DS Field, based on Section 3 of <xref
             target="RFC1349">RFC1349</xref>.</postamble>
           </figure>
 
           <t>A less common behaviour, ToS precedence remarking sets the upper
-          three bits of the DSCP field to a non-zero value corresponding to a
+          three bits of the DSCP field to a non-zero value resulting in a
+	  DSCP value assoicated with a 
           CS PHB. This behaviour is distinctive of non-DiffServ aware
           routers.</t>
 
-          <t>If remarking occurs, packets are treated using the PHB specified
-          for the resulting codepoint. For example, the AF31 DSCP (0x1a) could
-          be remarked to either AF11 or AF21.</t>
+          <t>For example, the AF31 DSCP (0x1a) could
+          be remarked to either AF11 or AF21. If such remarking occurs, 
+	  packets are treated using the PHB specified
+          for the resulting DSCP. </t>
         </section>
       </section>
 
@@ -524,7 +531,7 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         <t>In another example, some networks do not follow the recommendation
         in <xref target="RFC2475">RFC2475</xref>, and instead remark packets
         with an unknown or unexpected DSCP to the default class, CS0 (0x00) to
-        ensure that appropriate DSCPs are used within a DiffServ domain.
+        ensure that only appropriate DSCPs are used within a DiffServ domain.
         (e.g., see <xref target="RFC8100"></xref>).</t>
       </section>
     </section>
@@ -538,10 +545,10 @@ A DSCP can sometimes referred to by name, such as "CS1", and
       Multi-Protocol Label Switching (MPLS).</t>
 
       <section title="Mapping Specified for IEEE 802">
-        <t> This section discusses QoS and DiffServ alignment within IEEE 802 Standards.</t>
+        <t> This section discusses QoS and DiffServ alignment within the IEEE 802 Standards.</t>
       <section title="Mapping Specified for IEEE 802.1">
         <t>A 3-bit Priority Code Point (PCP) is specified in the IEEE 802.1Q
-        tag to mark Ethernet frames to one of eight priority values <xref
+        tag to associate Ethernet frames with one of eight priority values <xref
         target="IEEE-802-1Q"></xref>. The value zero indicates the default
         best effort treatment, and the value one indicates a background
         traffic class. The remaining values indicate increasing priority.
@@ -564,10 +571,10 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         target="IEEE-802-11">802.11 standards</xref> provide MAC functions to
         support QoS in WLANs using Access Classes (AC). The upstream User
         Priority (UP) in the 802.11 header has a 3-bit QoS value. A DSCP can
-        be mapped to the UP. Most existing WiFi implementations <xref
-        target="RFC8325"></xref> use a default mapping that utilises the three
+        be mapped to this UP. Most existing WiFi implementations <xref
+        target="RFC8325"></xref> use a default mapping for the three
         most significant bits of the DiffServ Field to the 802.11 UP. This is
-        then in turn mapped to the four WiFi Multimedia (WMM) Access
+        then mapped to one of the four WiFi Multimedia (WMM) Access
         Categories.</t>
 
        <figure>
@@ -580,14 +587,14 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 
 ]]></artwork>
 
-          <postamble>Figure showing the DSCP bits commonly mapped to the UP in
+          <postamble>Figure showing a common mapping using the first three bits of the DS Field to map to the UP in
           802.11.</postamble>
         </figure>
 
         <t></t>
-        <t><xref target="RFC8325">RFC8325</xref> notes inconsistencies that
-        can result from such remarking, and recommends how to perform this
-        remarking. It proposes several recommendations for mapping a DSCP to an IEEE 802.11 UP for
+        <t><xref target="RFC8325">RFC8325</xref> recommends how to perform this
+        remarking and notes inconsistencies that
+        can result. It recommendd several mappings for a DSCP to an IEEE 802.11 UP for
         wired-to-wireless interconnection. The recommendation includes mapping network control traffic CS6 and CS7, as well unassigned codepoints, to UP 0.</t>
 
         <t>In the upstream direction (wireless-to-wired interconnections, this mapping can result in a specific DSCP remarking pathology.
@@ -615,17 +622,17 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 
 ]]></artwork>
 
-          <postamble>Figure showing the pathology resulting from deriving from UP-to-DSCP mapping in some
-         802.11 networks.</postamble>
+          <postamble>Figure showing a pathology in remarking the last three bits of the DS Field resulting from UP-to-DSCP mapping in some
+         802.11 deployments.</postamble>
         </figure>
         <t>
-        An alternative to UP-to-DSCP remapping is using 
-        the DSCP value of a downstream IP packet (e.g., the Control And Provisioning of Wireless
-        Access Points (CAPWAP) protocol, RFC5415, maps an IP packet Diffserv field to the Diffserv field of outer IP headier in a CAPWAP
+        An alternative to UP-to-DSCP remapping uses 
+        the DSCP of a downstream IP packet (e.g., the Control And Provisioning of Wireless
+        Access Points (CAPWAP) protocol, RFC5415, maps the DSCP of the outer IP header in a CAPWAP
         tunnel).</t>
 
         <t>Some current constraints of WiFi mapping are discussed in section 2
-        of <xref target="RFC8325"></xref>. A QoS profile can be used to limit
+        of <xref target="RFC8325"></xref>. A QoS profile can limit
         the maximum DSCP value used for the upstream and downstream
         traffic.</t>
 
@@ -637,26 +644,25 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 
       <section title="Mappings Specified for MPLS">
 
-        <t>Multi-Protocol Label Switching (MPLS) specified eight MPLS Traffic
+        <t>Multi-Protocol Label Switching (MPLS) specifies eight MPLS Traffic
         Classes (TCs), which restricts the number of different treatments
         (e.g., see <xref target="RFC5129"></xref>). RFC 5127 describes
         aggregation of DiffServ TCs <xref target="RFC5127"></xref>, and
-        introduces four DiffServ Treatment Aggregates. Traffic marked with
-        multiple DSCPs can be forwarded in a single MPLS TC.</t>
+        introduces four DiffServ treatment aggregates. Packets marked
+	with one of a set of DSCP values 
+	can be forwarded in a single MPLS TC.</t>
 
-        <t>There are three Label-Switched Router (LSR) behaviors: the Pipe,
+        <t>MPLS defines three Label-Switched Router (LSR) behaviors: the Pipe,
         the Short Pipe and the Uniform Model <xref target="RFC3270"></xref>.
         These only differ when a LSP performs a push or a pop.</t>
 
-        <section title="Mappings Specified for MPLS">
+        <section title="Mapping Specified for MPLS">
           <t><xref target="RFC3270">RFC3270</xref> defines a flexible solution
           for support of DiffServ over MPLS networks. This allows an MPLS
           network administrator to select how BAs (marked by DSCPs) are mapped
           onto Label Switched Paths (LSPs) to best match the DiffServ, Traffic
           Engineering and protection objectives within their particular
-          network.</t>
-
-          <t>Mappings from the IP DSCP to the MPLS header are defined in
+          network. Mappings from the IP DSCP to the MPLS header are defined in
           Section 4.2 of <xref target="RFC3270"></xref>.</t>
 
           <t>Using the Pipe Model, the "LSP Diff-Serv Information" is conveyed
@@ -670,7 +676,7 @@ A DSCP can sometimes referred to by name, such as "CS1", and
           target="RFC3270">RFC3270</xref>).</t>
         </section>
 
-        <section title="Mappings Specified for MPLS Short Pipe">
+        <section title="Mapping Specified for MPLS Short Pipe">
 
           <t>The Short Pipe Model is an optional variation of the Pipe Model
           <xref target="RFC3270"></xref>.</t>
@@ -703,8 +709,7 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 
             <artwork><![CDATA[
 +--------------------------------------+--------+
-|  RFC8100                             |  DSCP  |
-|  Agg. Class                          |        |
+|  RFC8100 Aggregation Class           |  DSCP  |
 +--------------------------------------+--------+
 |Telephony Service Treatment Aggregate |   EF   |
 |                                      |   VA   |
@@ -733,7 +738,7 @@ A DSCP can sometimes referred to by name, such as "CS1", and
       <section title="Mapping Specified for Mobile Networks">
 
         <t>Mobile LTE and 5G standards have evolved from older UMTS standards,
-        and are Diffserv aware. LTE (4G) and 5G standards <xref
+        and are Diffserv-aware. LTE (4G) and 5G standards <xref
         target="SA-5G"></xref> identify traffic classes at the interface
         between User Equipment (UE) and the mobile Packet Core network by QCI
         (QoS Class Identifiers) and 5QI (5G QoS Identifier). The 3GPP
@@ -741,8 +746,8 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         each QCI or 5QI and Diffserv (and mobile QCIs are based on several
         criteria service class definitions). The way packets are mapped at the
         Packet Gateway (P-GW) boundary is determined by operators. However, TS
-        23.107 (version 16.0.0, applies to LTE and below) mandates that
-        Differentiated Services, defined by IETF, shall be used to
+        23.107 (version 16.0.0, applies to LTE and below) mandates
+        the IETF diffserv architecture to
         interoperate with IP backbone networks.</t>
 
         <t>The GSM Association (GSMA) has defined four aggregated classes and
@@ -750,7 +755,7 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         <xref target="GSMA-IR-34">GSMA IR.34</xref>. This was previously
         specified as the Inter-Service Provider IP Backbone Guidelines, and
         provides a mobile ISP to ISP QoS mapping mechanism, and
-        interconnection with other IP networks in the general Internet. This
+        interconnection with other IP networks in the general Internet. It
         describes the case where the DSCP marking from a Service Provider
         cannot be trusted (depending on the agreement between the Service
         Provider and its IPX Provider), allowing the IPX Provider to remark
@@ -790,25 +795,24 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 
       <section title="Mappings Specified for Carrier Ethernet">
 
-        <t>Metro Ethernet Forum (MEF) provides mappings of DSCP codepoints at
-        the IP layer to quality of service markings in the Ethernet frame
+        <t>The Metro Ethernet Forum (MEF) provides mappings of DSCP codepoints at
+        the IP layer to quality of service markings in Ethernet frame
         headers <xref target="MEF23.1">MEF 23.1</xref>.</t>
       </section>
 
       <section title="Remarking as a Side-effect of Another Policy">
         <t>The result of applying a QoS policy (such as matching the IP
         address, or traffic reaching a rate limit) could also result in a
-        packet being remarked to a different DSCP (/Remark/) when it is not
-        admitted to a service. Traffic marked with an EF and VA DSCP are often
+        packet being remarked (/Remark/) when it is not
+        admitted to a service. Traffic marked with an EF and VA DSCP can be
         policed by such policies.</t>
-
-        <t>Policies and L2 procedures can also result in remarking traffic as
-        a side-effect of other functions (e.g., in response to DDos).</t>
       </section>
 
       <section title="Summary">
-        <t>&lt;&lt; This section might contain a summary table &gt;&gt;</t>
-      </section>
+        <t>In summary, layer 2 network devices can utilise and modify (remark) the IP DSCP
+	as they forward IP packets. Policies and L2 procedures can also result in remarking traffic as
+        a side-effect of other functions (e.g., in response to detected DDos).</t>
+	</section>
     </section>
 
     <section title="Considerations for DSCP Selection">
@@ -818,8 +822,8 @@ A DSCP can sometimes referred to by name, such as "CS1", and
       DSCP.</t>
 
       <section title="Effect of Bleaching">
-        <t>New DSCP assignments should consider the impact of bleaching, which
-        can limit the ability to provide the expected treatment end-to-end.
+        <t>If a new PHB is expected to be used end-to-end across a network path,
+	the DSCP assignment should consider the impact of bleaching.
         This is particularly important for cases where the codepoint is
         intended to result in lower than best effort treatment, as was the
         case when defining the LE PHB <xref target="RFC8622"></xref>. In this
@@ -834,11 +838,10 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         the current recommendation is that any new assignment where the
         codepoint is greater than 0x07 should consider the semantics
         associated with the resulting DSCP when ToS precedence bleaching is
-        experienced. For example, it can be desirable to avoid choosing a DSCP
-        that could be remarked to LE, <xref target="RFC8622">Lower
-        Effort</xref>, which could otherwise potentially result in a priority
-        inversion in the treatment.</t>
+        experienced. This recommendation is expected to be revised
+	when this obsoleted behaviour is no longer common.</t>
       </section>
+	    
 
       <section title="Where the proposed DSCP &lt; 0x07 (7)">
         <t>ToS bleaching can unintentionally result in extra traffic
@@ -856,23 +859,29 @@ A DSCP can sometimes referred to by name, such as "CS1", and
 
           <t>When making assignments where the DSCP has a format: xxx 001b,
           the case of ToS Precedence Bleaching (/Bleach-ToS-Precedence/) of a
-          DSCP to a value of 0x01 needs to be considered. ToS Precedence
-          Bleaching will result in demoting the traffic to the lower effort
-          traffic class. Care should be taken to consider the implications
-          that a DSCP in this category could be remarked as LE.</t>
+          DSCP to a value of 0x01 needs to be spcifically considered. 
+	  In this case, ToS Precedence
+          Bleaching will result in demoting traffic to the
+          <xref target="RFC8622">Lower Effort</xref> traffic class. 
+          </t>
         </section>
       </section>
 
       <section title="Impact on deployed infrastructure">
-        <t>Behaviour of deployed PHBs and conditioning treatments also needs
+        <t>Implications of deployed PHBs and conditioning treatments also needs
         to be considered when assigning a new DSCP. Network operators have choices
         when it comes to configuring DiffServ support within their domains, and the pathologies 
 	described in the previous section can result from different configurations 
-	and approaches:</t>
+	and deployment:</t>
         <t><list style="hanging">
-            <t hangText="Networks not remarking DiffServ:"> A network that implements one or more PHBs, and does not remark DSCPs. Operators in this category pass all DSCPs transparently</t>
-            <t hangText="Networks that condition the DSCP:"> A network that implements more than one PHB and enforces SLAs with its peers. Operators in this category use conditioning to ensure that
-        only traffic that matches a policy is permitted to use a specific DSCP (see <xref target="RFC8100">RFC8100</xref>). This requires operators to choose to support or remark a new DSCP assignment.</t>
+            <t hangText="Networks not remarking DiffServ:"> 
+		    A network that implements one or more PHBs, and does not remark DSCPs. 
+		    Operators in this category pass all DSCPs without remarking.</t>
+            <t hangText="Networks that condition the DSCP:"> 
+		    A network that implements more than one PHB might decide to enforce an SLA with its peers. 
+		    Operators in this category can use conditioning to ensure that
+        only traffic that matches a policy is permitted to use a specific DSCP (see <xref target="RFC8100">RFC8100</xref>), 
+		    and decide to remark other traffic to a different DSCP.</t>
             <t hangText="Networks that remark in some other way:"> This includes: 
             </t>
                 <t><list style='numbers'>
@@ -881,10 +890,11 @@ A DSCP can sometimes referred to by name, such as "CS1", and
                 <t>Networks containing devices that remark the DSCP as a result of lower layer interactions.</t>
 		</list></t>
        </list></t>
-      <t>For example, the ToS-Precedence-Bleach pathology cannot arise in the
-	case of networks not remarking DiffServ, but can arise as a result of traffic
-	conditioning at operator boundaries. It can also arise in the case of
-	misconfiguration or in netwroks using old equipment which precedes DiffServ.
+      <t>The remarking pathology experienced along an end-to-end path can arise from various combinations
+	of equipment and configuration. For example, the ToS-Precedence-Bleach pathology does not arise in the
+	case of networks that do not perform DiffServ remarking, but can arise as a result of traffic
+	conditioning at operator boundaries. It can also arise when there is
+	misconfiguration or in networks using old equipment that precedes the DiffServ architecture.
       </t>
     
       </section>
@@ -902,40 +912,38 @@ A DSCP can sometimes referred to by name, such as "CS1", and
         These questions include:</t>
 
         <t><list style="symbols">
-            <t>How is the proposed service class characterised? - What are the
+  		<t>How is the proposed service class characterised? - What are the
             characteristics of the traffic to be carried? What are the
-            expectations for treatment?</t>
+            expectations for this treatment? Does it require a new DSCP?</t>
+	
+		<t>Can the request can be met by using an existing IETF DSCP?  
+		 Service Classes that can utilise existing PHBs should use the
+            assigned DSCPs to mark their traffic: </t>
 
-            <t>Service Classes that can utilise existing PHBs should use
-            assigned DSCPs to mark their traffic: Could the request be met by
-            using an existing IETF DSCP? How would the proposed new DSCP be
-            used to map traffic to a new or existing PHB?</t>
-
-            <t>Diffserv domains can use the codepoints in Pool 2 for local or
+		<t>Does this require an IANA-assigned DSCP? 
+	    Diffserv domains can use the codepoints in Pool 2 for local or
             experimental use, without any IETF specification for the DSCP or
             associated PHB: Could the request be met by using a DSCP chosen
             from Pool 2? Or is the DSCP intended to be used at network interconnections?</t>
 
-            <t>This document describes some observed marking behaviors (see
-            also below): What is the expected effect of currently-deployed
-            remarking on the end-to-end service?</t>
-
-            <t>Many DiffServ domains support only a small number of treatment
+		<t>How would the proposed new DSCP be
+            used to map traffic to a new or existing PHB? Many DiffServ domains support only a small number of treatment
             aggregates: What are the effects of treatment aggregation on the
             proposed method?</t>
-
-            <t>This documents describes some observed treatments by layers
-            below IP: What are the implications of using the proposed DSCP on
-            the expected lower layers over which the traffic may be
-            forwarded?</t>
+		
+            <t> If a DSCP is to be used on an end-to-end path, what is the expected effect of currently-deployed
+            remarking on the end-to-end service? This needs to consider currently observed remarking behaviors.</t?
+	 <t> If a DSCP is to be used on an end-to-end path, what is the expected treatment by layers
+		    below IP over which the traffic may be forwarded?</t>
           </list></t>
       </section>
     </section>
 
     <section anchor="Acknowledgments" title="Acknowledgments">
       <t>The authors acknowledge the helpful discussions and analysis by Greg
-      White and Thomas Fossati in a draft concerning NQB. We look forward to
-      further comments and review.</t>
+	      White, and Thomas Fossati, in a draft concerning NQB; and comments
+	    by Brian Carpenter, Rudiger Geib, and others in the TSV working group.</t>
+	   
     </section>
 
     <section anchor="IANA" title="IANA Considerations">
